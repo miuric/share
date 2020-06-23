@@ -1,0 +1,54 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "股票南向API"
+host: "localhost:8888"
+basePath: "/api/v1.0"
+schemes:
+- "http"
+paths:
+  /orders:
+    post:
+      summary: "交易"
+      operationId: "orders_post"
+      parameters:
+      - in: "body"
+        name: "Order"
+        required: false
+        schema:
+          $ref: "#/definitions/Order"
+      responses:
+        "200":
+          description: "TODO"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /positions:
+    get:
+      summary: "账本"
+      operationId: "positions_get"
+      parameters: []
+      responses:
+        "200":
+          description: "TODO"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+definitions:
+  Order:
+    properties:
+      symbol:
+        type: "string"
+        description: "股票代码"
+      action:
+        type: "string"
+        description: "BUY/SELL"
+      amount:
+        type: "integer"
+        description: "股票数量"
+      price:
+        type: "number"
+        description: "股票价格"
+      priceType:
+        type: "integer"
+        description: "TODO"
+      type:
+        type: "string"
+        description: "TODO"
