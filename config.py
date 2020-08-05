@@ -13,6 +13,7 @@ db_port = 3306
 
 south_base_host = "http://localhost:20202"
 
+# 百度识图
 bd_config = {
     'appId': '18898769',
     'apiKey': '80LZK2FsGUoSReVwaqhW5RN6',

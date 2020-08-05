@@ -213,4 +213,9 @@ class BaseHandler(tornado.web.RequestHandler):
                 self.body_json = obj
                 return obj
         except Exception:
-            raise JsonErrorEnum.INVALID.exception()
+            self.body_json = self.request.arguments
+            for k, v in self.body_json.items():
+                self.body_json[k] = v[0].decode('utf-8')
+
+            return self.body_json
+            # raise JsonErrorEnum.INVALID.exception()

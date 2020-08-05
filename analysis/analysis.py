@@ -624,7 +624,7 @@ def analysis():
 
 
 if __name__ == '__main__':
-    test_flag = 1
+    test_flag = 0
 
     # update_zhangben()
 
