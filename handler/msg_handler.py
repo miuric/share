@@ -7,6 +7,19 @@ from model.stock_model.streamer import Streamer, StreamerStatusEnum
 
 
 class MsgHandler(BaseHandler):
+    @staticmethod
+    def failed_resp():
+        return {
+            'code': 60204,
+            'message': 'Account and password are incorrect.'
+        }
+
+    @staticmethod
+    def success_resp():
+        return {
+            'code': 20000,
+        }
+
     @tornado_wrap
     async def get(self, params, data, headers):
         size, page = int(params['size']), int(params['page'])
@@ -61,3 +74,21 @@ class MsgHandler(BaseHandler):
         streamer.id = id
 
         await DbStreamer.update_streamer(streamer)
+
+    @tornado_wrap
+    async def delete(self, params, data, headers):
+        ids = params['id']
+
+        if not isinstance(ids, list):
+            ids = [ids]
+
+        for id in ids:
+            streamer = Streamer.from_dict(data)
+            streamer.id = id
+
+            db_streamer = DbStreamer()
+            db_streamer.id = id
+
+            await db_streamer.delete()
+
+        return 200, self.success_resp()

@@ -18,8 +18,16 @@ def tornado_wrap(func):
     async def wrapper(*args, **kwargs):
         handler = args[0]
         try:
-            params = {k: handler.decode_argument(v[0], name=k)
-                      for k, v in handler.request.query_arguments.items()}
+            params = {}
+
+            for k, v in handler.request.query_arguments.items():
+                if len(v) == 1:
+                    k = k.replace('[]', '')
+                    params[k] = handler.decode_argument(v[0], name=k)
+                else:
+                    k = k.replace('[]', '')
+                    params[k] = [handler.decode_argument(vv, name=k) for vv in v]
+
             params.update(kwargs)
             handler.params = params
             data = handler.json_body_load()
