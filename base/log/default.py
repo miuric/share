@@ -7,7 +7,7 @@ from config import STDERR_DEBUG_LEVEL
 
 config = {
     "handlers": [
-        {"sink": sys.stderr, "level": STDERR_DEBUG_LEVEL, },
+        {"sink": sys.stderr, "level": STDERR_DEBUG_LEVEL, 'backtrace': False, 'diagnose': False},
     ],
     "extra": {
         "user": "someone",
@@ -32,6 +32,5 @@ class InterceptHandler(logging.Handler):
             depth += 1
 
         logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
-
 
 # logging.basicConfig(handlers=[InterceptHandler()], level=0)

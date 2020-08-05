@@ -24,11 +24,13 @@ def tornado_wrap(func):
             data = handler.json_body_load()
             headers = handler.request.headers
             handler.headers = headers
+            await handler.handle_start()
             result = await func(handler, params, data, headers)
 
         except Exception as e:
             handler.exception_reason = e
             await handler.handle_exception(e)
+            await handler.handle_finish()
             if isinstance(e, HandlerError):
                 e.handler_write_error(handler)
             else:
@@ -106,6 +108,12 @@ class BaseHandler(tornado.web.RequestHandler):
         pass
 
     async def handle_success(self):
+        pass
+
+    async def handle_finish(self):
+        pass
+
+    async def handle_start(self):
         pass
 
     def form_response(self):

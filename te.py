@@ -1,27 +1,18 @@
-from functools import reduce
+from typing import List
 
-import numpy as np
-
-a = np.arange(10, 101, 10)
-
-
-def add(x, y):
-    return x + y
-
-
-print(reduce(add, a))
-
-# 10 -100
-
-# 200 290
+ori_words2 = '''2019-06-21 9:34:21 淘金尾盘股 服务中 欢迎加入(648296752)
+【趋势型—兰博LS】
+双塔食品(002481)
+调出
+7.81
+1成仓
+-----------------------------
+[操作提示]
+双塔食品 7.8左右反弹卖出 今天低开就弱了。
+开盘买入 300256 星星科技 低价便宜创业板
 
 
-a = 10
-total = 0
-for i in range(15):
-    b = np.arange(a, a + 10 * 10, 10)
-    print(b)
-    total += reduce(add, b)
-    a += 10
-print(total)
+'''
+
+sn = '648296752'
 

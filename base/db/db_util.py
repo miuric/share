@@ -271,6 +271,15 @@ class BaseDbModel(object):
             #     self.from_dict(obj.__dict__)
         pass
 
+    async def select_one_r(self):
+        r, m = await self.select()
+        db_model = None
+
+        if len(r):
+            db_model = type(self)(r[0])
+
+        return db_model
+
     def strip_self(self):
         return {k: v for k, v in self.__dict__.items() if v is not None}
 
