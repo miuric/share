@@ -218,7 +218,7 @@ class DBClause():
         if orderby:
             stmt += (' order by %s ' % orderby) + ('desc' if descend else 'asc')
 
-        if isinstance(limit, int):
+        if isinstance(limit, str):
             stmt += ' LIMIT ' + str(limit)
         # End
         # stmt += ";"
@@ -279,6 +279,10 @@ class BaseDbModel(object):
             db_model = type(self)(r[0])
 
         return db_model
+
+    async def select_all(self):
+        r, m = await self.select()
+        return [type(self)(row) for row in r]
 
     def strip_self(self):
         return {k: v for k, v in self.__dict__.items() if v is not None}
@@ -394,6 +398,13 @@ class BaseDbModel(object):
                                        self.__class__.pkey: self.__dict__[self.__class__.pkey]},
                                    orderby=orderby, descend=descend, limit=limit, like=like, interval=interval)
         return sql, args, keys
+
+    async def select_count(self):
+        sql = "select count(1) from {}".format(self.tab_name)
+        dbc = TornadoMysqlUtils(self.db_name)
+        res = await dbc.exec_sql(sql, None, log_sql=True)
+        count = res[0][0]
+        return count
 
     @dbo_dict_with_null
     def select_with_null(self, partial=None, orderby=None, limit=None, pkey=False, like=False, interval=None):

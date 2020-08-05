@@ -1,26 +1,17 @@
 from base.handler.base_handler import tornado_wrap, BaseHandler
+from database.stock import DbStreamer
 from database.user import DbUser
 
 import log
+from model.stock_model.streamer import Streamer, StreamerStatusEnum
 
 
 class MsgHandler(BaseHandler):
-    @staticmethod
-    def failed_resp():
-        return {
-            'code': 60204,
-            'message': 'Account and password are incorrect.'
-        }
-
-    @staticmethod
-    def success_resp(token):
-        return {
-            'code': 20000,
-            'data': {'token': token},
-        }
-
     @tornado_wrap
     async def get(self, params, data, headers):
+        size, page = int(params['size']), int(params['page'])
+        start = (page - 1) * size
+
         content = {
             'status': 'finish',
             'seq': '1',
@@ -42,10 +33,23 @@ class MsgHandler(BaseHandler):
 
         }
         contents = [content] * 10
+
+        all_streamers = [streamer.to_dict() for streamer in await DbStreamer.get_all_streamer(start, size)]
+
+        contents = all_streamers
+        count = await DbStreamer().select_count()
         resp = {
             "payload": {
-                "totalElements": len(contents),
+                "totalElements": count,
                 "content": contents
             }
         }
         return 200, resp
+
+    @tornado_wrap
+    async def post(self, params, data, headers):
+        streamer = Streamer.from_dict(data)
+        streamer.status = StreamerStatusEnum.NO_EXECUTE.value
+
+        db_streamer = DbStreamer().input(streamer)
+        await db_streamer.insert()

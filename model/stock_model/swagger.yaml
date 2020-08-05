@@ -1,0 +1,51 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "股票南向API"
+host: "localhost:8888"
+basePath: "/api/v1.0"
+schemes:
+- "http"
+paths:
+  /positions:
+    get:
+      summary: "账本"
+      operationId: "positions_get"
+      parameters: []
+      responses:
+        "200":
+          description: "TODO"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+definitions:
+  Streamer:
+    properties:
+      id:
+        type: "integer"
+      status:
+        type: "string"
+      group_no:
+        type: "string"
+      qq:
+        type: "string"
+      name:
+        type: "string"
+      space_percent:
+        type: "number"
+        format: float
+      one_found:
+        type: "number"
+        format: float
+      multi_one_found:
+        type: "number"
+        format: float
+      buy_words:
+        type: "string"
+      sell_words:
+        type: "string"
+      disable_words:
+        type: "string"
+      start_words:
+        type: "string"
+      end_words:
+        type: "string"

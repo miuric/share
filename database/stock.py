@@ -1,48 +1,43 @@
-import json
-
 from base.db.db_util import BaseDbModel
+from model.stock_model.streamer import Streamer
 
 
-class DbResume(BaseDbModel):
+class DbStreamer(BaseDbModel):
     pkey = 'id'
-    db_name = 'nod_kafka'
-    tab_name = 'Resume'
+    db_name = 'share'
+    tab_name = 'Streamer'
 
     def __init__(self, obj=None):
         self.id = None
-        self.group_id = None
-        self.service = None
-        self.url = None
-        self.methd = None
-        self.serial_no = None
-        self.body_json = None
+        self.status = None
+        self.group_no = None
+        self.qq = None
+        self.name = None
+        self.space_percent = None
+        self.one_found = None
+        self.multi_one_found = None
+        self.buy_words = None
+        self.sell_words = None
+        self.disable_words = None
+        self.start_words = None
+        self.end_words = None
         super().__init__(obj)
 
-    @classmethod
-    def init(cls, service=None, url=None, methd=None, serial_no=None, body_json: dict = None):
-        db_resume = cls()
-        db_resume.group_id = 3
-        db_resume.service = service
-
-        if url is None:
-            return db_resume
-
-        db_resume.url = url
-        db_resume.methd = methd
-        db_resume.serial_no = serial_no
-        return db_resume
-
-    def output(self):
-        self.body_json = json.loads(self.body_json)
-
+    def input(self, obj):
+        if isinstance(obj, Streamer):
+            self.from_dict(obj.to_dict())
         return self
 
-    async def select_all(self):
-        r, m = await self.select()
-        db_resumes = []
+    def output(self):
+        return Streamer.from_dict(self.strip_self())
 
-        for row in r:
-            db_resume = type(self)(row).output()
-            db_resumes.append(db_resume)
+    async def select_all_by_limit(self, start, size):
+        limit = '{}, {}'.format(start, size)
+        r, m = await self.select(limit=limit)
+        return [type(self)(row) for row in r]
 
-        return db_resumes
+    @classmethod
+    async def get_all_streamer(cls, start, size):
+        all_streams = [db.output() for db in await cls().select_all_by_limit(start, size)]
+
+        return all_streams

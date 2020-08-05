@@ -1,7 +1,6 @@
 from base.handler.base_handler import tornado_wrap, BaseHandler
 import log
 from config import bd_client
-from database.stock import DbResume
 
 
 def get_file_content(file):
