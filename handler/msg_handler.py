@@ -53,3 +53,11 @@ class MsgHandler(BaseHandler):
 
         db_streamer = DbStreamer().input(streamer)
         await db_streamer.insert()
+
+    @tornado_wrap
+    async def put(self, params, data, headers):
+        id = params['id']
+        streamer = Streamer.from_dict(data)
+        streamer.id = id
+
+        await DbStreamer.update_streamer(streamer)

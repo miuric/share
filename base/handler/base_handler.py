@@ -20,6 +20,7 @@ def tornado_wrap(func):
         try:
             params = {k: handler.decode_argument(v[0], name=k)
                       for k, v in handler.request.query_arguments.items()}
+            params.update(kwargs)
             handler.params = params
             data = handler.json_body_load()
             headers = handler.request.headers

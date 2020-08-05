@@ -18,6 +18,7 @@ class ShareApp(tornado.web.Application):
             (base_url + r'/user/info', UserInfoHandler),
 
             # front-end
+            (base_url + r'/message/(?P<id>.+)', MsgHandler),
             (base_url + r'/message', MsgHandler),
 
             # main

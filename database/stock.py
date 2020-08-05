@@ -41,3 +41,7 @@ class DbStreamer(BaseDbModel):
         all_streams = [db.output() for db in await cls().select_all_by_limit(start, size)]
 
         return all_streams
+
+    @classmethod
+    async def update_streamer(cls, streamer: Streamer):
+        await DbStreamer().input(streamer).update()
