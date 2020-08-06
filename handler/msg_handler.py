@@ -23,6 +23,8 @@ class MsgHandler(BaseHandler):
     @tornado_wrap
     async def get(self, params, data, headers):
         size, page = int(params['size']), int(params['page'])
+        prop, order = params.get('prop'), params.get('order')
+        print(order)
         start = (page - 1) * size
 
         content = {
@@ -47,10 +49,18 @@ class MsgHandler(BaseHandler):
         }
         contents = [content] * 10
 
-        all_streamers = [streamer.to_dict() for streamer in await DbStreamer.get_all_streamer(start, size)]
+        order_by, descend = None, True
+        if prop:
+            order_by = prop
+            if order == 'ascending':
+                descend = False
+
+        all_streamers = [streamer.to_dict() for streamer in
+                         await DbStreamer.get_all_streamer(start, size, order_by, descend)]
 
         contents = all_streamers
         count = await DbStreamer().select_count()
+
         resp = {
             "payload": {
                 "totalElements": count,

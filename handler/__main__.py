@@ -3,7 +3,9 @@ import tornado.ioloop
 import tornado.web
 
 from handler.analysis_handler import AnalysisHandler
+from handler.end_handler import EndHandler
 from handler.msg_handler import MsgHandler
+from handler.start_handler import StartHandler
 from handler.user_handler import LoginHandler, UserInfoHandler
 from config import ms_port_config, SHARE
 
@@ -20,6 +22,8 @@ class ShareApp(tornado.web.Application):
             # front-end
             (base_url + r'/message/(?P<id>.+)', MsgHandler),
             (base_url + r'/message', MsgHandler),
+            (base_url + r'/start', StartHandler),
+            (base_url + r'/end', EndHandler),
 
             # main
             (r'/ori_words', AnalysisHandler)
