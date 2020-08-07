@@ -24,7 +24,6 @@ class MsgHandler(BaseHandler):
     async def get(self, params, data, headers):
         size, page = int(params['size']), int(params['page'])
         prop, order = params.get('prop'), params.get('order')
-        print(order)
         start = (page - 1) * size
 
         content = {
@@ -50,7 +49,7 @@ class MsgHandler(BaseHandler):
         contents = [content] * 10
 
         order_by, descend = None, True
-        if prop:
+        if prop and order:
             order_by = prop
             if order == 'ascending':
                 descend = False
