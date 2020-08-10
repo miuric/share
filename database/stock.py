@@ -45,3 +45,14 @@ class DbStreamer(BaseDbModel):
     @classmethod
     async def update_streamer(cls, streamer: Streamer):
         await DbStreamer().input(streamer).update()
+
+
+class DbGlobalLogic(BaseDbModel):
+    db_name = 'share'
+    tab_name = 'Global_logic'
+
+    def __init__(self, obj=None):
+        self.buy = None
+        self.sell = None
+        super().__init__(obj)
+

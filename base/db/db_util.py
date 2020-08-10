@@ -11,11 +11,11 @@ illegal_sql_pat = re.compile(r'(--|;|\sor\s|exec\s|union\s)', re.I | re.M)
 
 
 def check_sql_statement(sql):
-    sql = str(sql)
-    result = illegal_sql_pat.search(sql)
-    if result:
-        raise ValueError()
-
+    # sql = str(sql)
+    # result = illegal_sql_pat.search(sql)
+    # if result:
+    #     raise ValueError()
+    pass
 
 def dbo_dict(func):
     async def _dbo(*args, **kwargs):

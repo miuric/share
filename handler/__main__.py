@@ -4,6 +4,7 @@ import tornado.web
 
 from handler.analysis_handler import AnalysisHandler
 from handler.end_handler import EndHandler
+from handler.logic_handler import LogicHandler
 from handler.msg_handler import MsgHandler
 from handler.start_handler import StartHandler
 from handler.user_handler import LoginHandler, UserInfoHandler
@@ -24,6 +25,7 @@ class ShareApp(tornado.web.Application):
             (base_url + r'/message', MsgHandler),
             (base_url + r'/start', StartHandler),
             (base_url + r'/end', EndHandler),
+            (base_url + r'/logic', LogicHandler),
 
             # main
             (r'/ori_words', AnalysisHandler)
