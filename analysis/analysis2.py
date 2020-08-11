@@ -1,18 +1,69 @@
 import asyncio
+import re
 
 from base.common import get_price_min
 from database.stock import DbStreamer
 from model.stock_model.operation_words import ExecuteWords
 from model.stock_model.streamer import Streamer
 
+RE_CODE = re.compile(r'.*([0 3 6][0][0-9][0-9][0-9][0-9]).*')
+
+
+def _find_do_work(ori_words, streamer: Streamer):
+    buy_words, sell_words = streamer.buy_words, streamer.sell_words
+
+    do_word = None
+
+    for one_buy_words in buy_words.split(','):
+        if one_buy_words in ori_words:
+            do_word = ExecuteWords.BUY
+            break
+
+    for one_sell_words in sell_words.split(','):
+        if one_sell_words in ori_words:
+            do_word = ExecuteWords.SELL
+            break
+
+    return do_word
+
+
+def _find_do_code(ori_words):
+    match_code = RE_CODE.match(ori_words, re.I)
+
+    if match_code:
+        match_code = match_code.group(1)
+
+    return match_code
+
+
+def _find_do_price(ori_words, streamer: Streamer, do_word, do_code):
+    if None in (do_word, do_code):
+        return None
+
+    one_found = streamer.one_found
+
+    do_price = None
+
+    if do_word == ExecuteWords.SELL and do_code:
+        do_price = get_price_min(do_code)
+
+    if do_word == ExecuteWords.BUY:
+        pass
+
+
+    return do_price
+
 
 def origin2execute(ori_words, streamer: Streamer):
     temp_words = ori_words
 
-    start_words, end_words, buy_words, sell_words = \
-        streamer.start_words, streamer.end_words, streamer.buy_words, streamer.sell_words
+    disable_words, start_words, end_words = streamer.disable_words, streamer.start_words, streamer.end_words
 
     do_code, do_word, do_price, do_amount = None, None, None, None
+
+    # disable
+    for word in disable_words:
+        temp_words = temp_words.replace(word, '')
 
     # start & end words
     if start_words:
@@ -34,23 +85,13 @@ def origin2execute(ori_words, streamer: Streamer):
                 temp_words = temp_words[:index]
 
     # do_word
-    for one_buy_words in buy_words.split(','):
-        if one_buy_words in temp_words:
-            do_word = ExecuteWords.BUY
-
-    for one_sell_words in sell_words.split(','):
-        if one_sell_words in temp_words:
-            do_word = ExecuteWords.SELL
+    do_word = _find_do_work(temp_words, streamer)
 
     # do_code
-    do_code = ExecuteWords.de_code_in_words(temp_words)
+    do_code = _find_do_code(temp_words)
 
     # do_price
-    if do_word == ExecuteWords.SELL and do_code:
-        do_price = get_price_min(do_code)
-
-    if do_word == ExecuteWords.BUY:
-        pass
+    do_price = _find_do_price(temp_words, streamer, do_word, do_code)
 
     print(do_code, do_word, do_price, do_amount)
 

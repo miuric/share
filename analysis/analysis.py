@@ -291,7 +291,7 @@ def goanalysys(zb, ori_words):
             1成仓
             """
 
-            # do_word = 'buy'
+            do_word = 'buy'
 
             if (test_code):
                 do_code = test_code.group(1)
