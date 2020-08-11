@@ -1,12 +1,14 @@
 import asyncio
+import datetime
 import re
 
-from base.common import get_price_min
-from database.stock import DbStreamer
+from base.common import get_price_min, getprice
+from database.stock import DbStreamer, DbGlobalLogic
 from model.stock_model.operation_words import ExecuteWords
 from model.stock_model.streamer import Streamer
 
-RE_CODE = re.compile(r'.*([0 3 6][0][0-9][0-9][0-9][0-9]).*')
+RE_CODE = re.compile(r'.*([0 3 6][0][0-9][0-9][0-9][0-9]).*', re.I)
+RE_PRICE = re.compile(r'\d+\.?\d*', re.I)
 
 
 def _find_do_work(ori_words, streamer: Streamer):
@@ -36,11 +38,9 @@ def _find_do_code(ori_words):
     return match_code
 
 
-def _find_do_price(ori_words, streamer: Streamer, do_word, do_code):
+def _find_do_price(ori_words, streamer: Streamer, do_word, do_code, global_logic: DbGlobalLogic):
     if None in (do_word, do_code):
         return None
-
-    one_found = streamer.one_found
 
     do_price = None
 
@@ -48,13 +48,28 @@ def _find_do_price(ori_words, streamer: Streamer, do_word, do_code):
         do_price = get_price_min(do_code)
 
     if do_word == ExecuteWords.BUY:
-        pass
+        price_now = getprice(do_code)
+        do_price = price_now
+        new_words_no_code = ori_words.replace(do_code, '')
+        new_do_price = None
+        find_price = RE_PRICE.findall(new_words_no_code)
 
+        for one_price in find_price:
+            if abs(float(one_price) - float(price_now)) / float(price_now) < 0.11:
+                if not new_do_price:
+                    new_do_price = one_price
+                else:
+                    if abs(float(one_price) - float(price_now)) < abs(
+                            float(new_do_price) - float(price_now)):
+                        new_do_price = one_price
+        if new_do_price:
+            do_price = new_do_price
+        do_price = round(float(do_price) + global_logic.buy, 2)
 
     return do_price
 
 
-def origin2execute(ori_words, streamer: Streamer):
+def origin2execute(ori_words, streamer: Streamer, global_logic: DbGlobalLogic):
     temp_words = ori_words
 
     disable_words, start_words, end_words = streamer.disable_words, streamer.start_words, streamer.end_words
@@ -91,21 +106,21 @@ def origin2execute(ori_words, streamer: Streamer):
     do_code = _find_do_code(temp_words)
 
     # do_price
-    do_price = _find_do_price(temp_words, streamer, do_word, do_code)
+    do_price = _find_do_price(temp_words, streamer, do_word, do_code, global_logic)
 
     print(do_code, do_word, do_price, do_amount)
 
-    standard = temp_words
+    execute_words = ExecuteWords(do_word, do_code, do_price, do_amount)
 
-    return standard
+    return execute_words
 
 
 zb = '567700379-2448009272'
 ori_words = '''2019-06-21 9:34:21 淘金尾盘股 服务中 欢迎加入(648296752)
 【趋势型—兰博LS】
 双塔食品(002481)
-调出
-7.81
+调入
+17.81
 1成仓
 -----------------------------
 【操作提示】
@@ -117,8 +132,12 @@ ori_words = '''2019-06-21 9:34:21 淘金尾盘股 服务中 欢迎加入(6482967
 
 async def hey():
     db: DbStreamer = await DbStreamer().select_one_r()
+    db_logic = await DbGlobalLogic().select_one_r()
     st = db.output()
-    print(origin2execute(ori_words, st))
+    print(origin2execute(ori_words, st, db_logic))
 
 
-asyncio.get_event_loop().run_until_complete(hey())
+# asyncio.get_event_loop().run_until_complete(hey())
+
+
+# print(type(datetime.datetime.now()))

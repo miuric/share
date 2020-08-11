@@ -1,3 +1,5 @@
+import datetime
+
 from base.db.db_util import BaseDbModel
 from model.stock_model.streamer import Streamer
 
@@ -56,3 +58,20 @@ class DbGlobalLogic(BaseDbModel):
         self.sell = None
         super().__init__(obj)
 
+
+class DbLog(BaseDbModel):
+    pkey = 'id'
+    db_name = 'share'
+    tab_name = 'Log'
+
+    def __init__(self, obj=None):
+        self.ori_words = None
+        self.execute_words = None
+        self.reason = None
+        self.created_time = None
+        super().__init__(obj)
+
+    async def insert_log(self):
+        self.created_time = datetime.datetime.now()
+        self.created_time = self.created_time.strftime('%Y-%m-%d %H:%M:%S')
+        await self.insert()

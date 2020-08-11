@@ -19,3 +19,18 @@ def get_price_min(code):  # 最低价
     page = response.read().decode('gbk')
     data = page.split('~')
     return data[48]
+
+
+def getprice(code):  # 股票价格
+    url_base = "http://qt.gtimg.cn/q=s_"
+    if code[0] == '6':
+        url = url_base + 'sh' + code
+    else:
+        url = url_base + 'sz' + code
+    # print(url)
+    req = request.Request(url)
+    response = request.urlopen(req)
+    page = response.read().decode('gbk')
+    data = page.split('~')
+    # print(data)
+    return data[3]

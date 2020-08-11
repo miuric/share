@@ -450,7 +450,8 @@ class TornadoMysqlUtils:
             if db in cls.__con_age:
                 age = datetime.datetime.now() - cls.__con_age[db]  # timedelta
                 if age.seconds > cls.CONNECTION_MAX_AGE and pool:
-                    pool.close()
+                    # pool.close()
+                    pass
                 pass
             pass
         obj = tornado.ioloop.IOLoop.instance()
