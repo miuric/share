@@ -8,6 +8,7 @@ import tornado.gen
 import tornado.httpclient
 
 from base.err_manage.err_enum import JsonErrorEnum, HandlerError, ServerErrorEnum, HTTP_CODE
+from log import logger
 
 bytes_decode = lambda x: x.decode('utf-8') if isinstance(x, bytes) else x
 json_header = {'Content-Type': 'application/json; charset=utf-8', 'Accept': 'application/json'}
@@ -47,6 +48,7 @@ def tornado_wrap(func):
 
         else:
             await handler.handle_success()
+            await handler.handle_finish()
             handler_finish(handler, *(result or [HTTP_CODE.SUCCESS, None, None]))
 
     def handler_finish(handler, code, resp, headers=None):
@@ -66,6 +68,16 @@ def tornado_wrap(func):
 
 
 class BaseHandler(tornado.web.RequestHandler):
+    @property
+    def exception_reason(self):
+        if getattr(self, '_exception', None) is None:
+            self._exception = None
+        return self._exception
+
+    @exception_reason.setter
+    def exception_reason(self, value: Exception):
+        self._exception = str(value.args[0]).replace("'", "\\\'")
+
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
         self._exception = None
@@ -157,8 +169,10 @@ class BaseHandler(tornado.web.RequestHandler):
         code = 500
         try:
             req_body = None
+            logger.debug(str(metd) + '  ' + str(url))
             if req_obj:
                 req_body = json.dumps(req_obj)
+                logger.debug(str(req_body))
             user = passwd = None
             if auth and 'user' in auth and 'passwd' in auth:
                 user = auth['user']
@@ -184,11 +198,14 @@ class BaseHandler(tornado.web.RequestHandler):
             start = datetime.datetime.now()
             resp = yield tornado.gen.Task(client.fetch, http_req)
             code = resp.code
+            logger.debug(str(metd) + ' QUERY, Code is %s, Time Consuming: %s' % (code, datetime.datetime.now() - start))
             if code > 300:
+                logger.debug(str(resp))
                 # raise tornado.gen.Return((code, resp.error.message, None))
                 raise tornado.gen.Return((code, bytes_decode(resp.body), None))
 
             else:
+                logger.debug('Response:', resp.body)
                 # log_util.d('Response:', '' if not resp.body is None else bytes_decode(resp.body))
                 pass
 

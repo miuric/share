@@ -24,18 +24,12 @@ QQ_FILE = os.path.join(QQ_DIR, 'qq.log')
 EXCEPTION_FILE = os.path.join(EXCEPTION_DIR, 'exception.log')
 
 # 全局debug
-logger.add(ALL_DEBUG_FILE, level='DEBUG', backtrace=False, diagnose=False, rotation='1h')
+logger.add(ALL_DEBUG_FILE, level='DEBUG', backtrace=False, diagnose=False, rotation='1 days')
 # exception
 logger.add(EXCEPTION_FILE, level='ERROR', backtrace=False, diagnose=False, rotation='1 days')
 
 # qq
-sss = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | " \
+qq_format = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | " \
       "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
-logger.add(QQ_FILE, filter=lambda record: "qq" in record["extra"], level='INFO', format=sss)
+logger.add(QQ_FILE, filter=lambda record: "qq" in record["extra"], level='INFO', format=qq_format)
 qq_logger = logger.bind(qq=True)
-
-# async def llll(message):
-#     ddd = message.record
-#     pass
-#
-# logger.add(llll)

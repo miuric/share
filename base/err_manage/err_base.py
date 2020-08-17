@@ -1,10 +1,8 @@
 import sys
-import traceback
 from collections import Iterable
 from enum import Enum
 
 from .status_code import HTTP_CODE
-import log
 
 
 class HandlerError(Exception):
@@ -17,7 +15,6 @@ class HandlerError(Exception):
         return type(self), self, sys.exc_info()[2]
 
     def handler_write_error(self, handler):
-        log.logger.exception(self.message, traceback.format_exc())
         exc_info = self.get_exc_info()
         handler.write_error(self.err_code, exc_info=exc_info)
 

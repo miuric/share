@@ -21,7 +21,7 @@ class Streamer(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id: int=None, status: str=None, group_no: str=None, qq: str=None, name: str=None, space_percent: float=None, one_found: float=None, multi_one_found: float=None, buy_words: str=None, sell_words: str=None, disable_words: str=None, start_words: str=None, end_words: str=None):  # noqa: E501
+    def __init__(self, id: int=None, status: str=None, group_no: str=None, qq: str=None, name: str=None, space_percent: str=None, one_found: float=None, multi_one_found: float=None, buy_words: str=None, sell_words: str=None, disable_words: str=None, start_words: str=None, end_words: str=None):  # noqa: E501
         """Streamer - a model defined in Swagger
 
         :param id: The id of this Streamer.  # noqa: E501
@@ -35,7 +35,7 @@ class Streamer(Model):
         :param name: The name of this Streamer.  # noqa: E501
         :type name: str
         :param space_percent: The space_percent of this Streamer.  # noqa: E501
-        :type space_percent: float
+        :type space_percent: str
         :param one_found: The one_found of this Streamer.  # noqa: E501
         :type one_found: float
         :param multi_one_found: The multi_one_found of this Streamer.  # noqa: E501
@@ -57,7 +57,7 @@ class Streamer(Model):
             'group_no': str,
             'qq': str,
             'name': str,
-            'space_percent': float,
+            'space_percent': str,
             'one_found': float,
             'multi_one_found': float,
             'buy_words': str,
@@ -214,22 +214,22 @@ class Streamer(Model):
         self._name = name
 
     @property
-    def space_percent(self) -> float:
+    def space_percent(self) -> str:
         """Gets the space_percent of this Streamer.
 
 
         :return: The space_percent of this Streamer.
-        :rtype: float
+        :rtype: str
         """
         return self._space_percent
 
     @space_percent.setter
-    def space_percent(self, space_percent: float):
+    def space_percent(self, space_percent: str):
         """Sets the space_percent of this Streamer.
 
 
         :param space_percent: The space_percent of this Streamer.
-        :type space_percent: float
+        :type space_percent: str
         """
 
         self._space_percent = space_percent

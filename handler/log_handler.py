@@ -1,6 +1,5 @@
-from analysis.analysis2 import origin2execute
 from base.handler.base_handler import tornado_wrap, BaseHandler
-from database.stock import DbStreamer, DbGlobalLogic, DbLog
+from database.stock import DbLog
 
 
 class LogHandler(BaseHandler):

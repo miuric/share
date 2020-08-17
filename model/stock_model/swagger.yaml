@@ -31,8 +31,7 @@ definitions:
       name:
         type: "string"
       space_percent:
-        type: "number"
-        format: float
+        type: "string"
       one_found:
         type: "number"
         format: float

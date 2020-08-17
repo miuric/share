@@ -25,6 +25,18 @@ class DbStreamer(BaseDbModel):
         self.end_words = None
         super().__init__(obj)
 
+    @classmethod
+    async def find_streamer_by_qq(cls, group_no, qq):
+        db = cls()
+        db.group_no, db.qq = group_no, qq
+
+        db = await db.select_one_r()
+        streamer = None
+        if db is not None:
+            streamer = db.output()
+
+        return streamer
+
     def input(self, obj):
         if isinstance(obj, Streamer):
             self.from_dict(obj.to_dict())
@@ -69,6 +81,7 @@ class DbLog(BaseDbModel):
         self.execute_words = None
         self.reason = None
         self.created_time = None
+        self.api = None
         super().__init__(obj)
 
     async def insert_log(self):
