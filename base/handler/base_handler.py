@@ -119,6 +119,10 @@ class BaseHandler(tornado.web.RequestHandler):
     async def delete(self, params, data, headers):
         pass
 
+    @tornado_wrap
+    async def options(self, *args, **kwargs):
+        pass
+
     def resp_with_output(self, resp):
         return resp
 
