@@ -9,7 +9,7 @@ from log import logger
 from model.stock_model.operation_words import ExecuteWords
 from model.stock_model.streamer import Streamer
 
-RE_CODE = re.compile(r'.*([0 3 6][0][0-9][0-9][0-9][0-9]).*', re.I)
+RE_CODE = re.compile(r'.*([0 3 6][0][0-9][0-9][0-9][0-9]).*', re.I | re.M | re.S)
 RE_PRICE = re.compile(r'\d+\.?\d*', re.I)
 
 
@@ -32,7 +32,7 @@ def _find_do_work(ori_words, streamer: Streamer):
 
 
 def _find_do_code(ori_words):
-    match_code = RE_CODE.match(ori_words, re.I)
+    match_code = RE_CODE.match(ori_words)
 
     if match_code:
         match_code = match_code.group(1)
@@ -178,7 +178,6 @@ async def hey():
     db_logic = await DbGlobalLogic().select_one_r()
     st = db.output()
     print(origin2execute(ori_words, st, db_logic))
-
 
 # asyncio.get_event_loop().run_until_complete(hey())
 

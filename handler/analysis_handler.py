@@ -34,6 +34,7 @@ class AnalysisHandler(BaseHandler):
 
     async def handle_start(self):
         self.db_log = DbLog()
+        self.is_insert_db = False
 
     @tornado_wrap
     async def post(self, params, data, headers):
@@ -105,9 +106,11 @@ class AnalysisHandler(BaseHandler):
             try:
                 logger.debug('api返回值: ', r)
                 self.db_log.api = json.dumps(r)
+                self.db_log.is_execute = '是'
             except:
                 pass
         else:
             logger.debug('不执行交易')
+            self.db_log.is_execute = '否'
 
         return 200, '200 OK'

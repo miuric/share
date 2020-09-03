@@ -82,6 +82,7 @@ class DbLog(BaseDbModel):
         self.reason = None
         self.created_time = None
         self.api = None
+        self.is_execute = None
         super().__init__(obj)
 
     async def insert_log(self):
