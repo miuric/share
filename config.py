@@ -11,7 +11,11 @@ db_user = 'root'
 db_passwd = 'liuyirui'
 db_port = 3306
 
-south_base_host = "http://localhost:20202"
+#south
+# south_base_host = "http://localhost:20202"
+south_base_host = "http://49.233.250.82:8888"
+key = 'key'
+client = 'name:client-2'
 
 # 百度识图
 bd_config = {

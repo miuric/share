@@ -3,6 +3,7 @@ import tornado.ioloop
 import tornado.web
 
 from handler.analysis_handler import AnalysisHandler
+from handler.buy_handler import BuyHandler, SellHandler
 from handler.end_handler import EndHandler
 from handler.log_handler import LogHandler
 from handler.logic_handler import LogicHandler
@@ -28,6 +29,8 @@ class ShareApp(tornado.web.Application):
             (base_url + r'/start', StartHandler),
             (base_url + r'/end', EndHandler),
             (base_url + r'/logic', LogicHandler),
+            (base_url + r'/buy', BuyHandler),
+            (base_url + r'/sell', SellHandler),
 
             # main
             (r'/ori_words', AnalysisHandler)
