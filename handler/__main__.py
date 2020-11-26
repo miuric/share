@@ -8,6 +8,7 @@ from handler.end_handler import EndHandler
 from handler.log_handler import LogHandler
 from handler.logic_handler import LogicHandler
 from handler.msg_handler import MsgHandler
+from handler.position_handler import PositionHandler, AccountHandler
 from handler.start_handler import StartHandler
 from handler.user_handler import LoginHandler, UserInfoHandler
 from config import ms_port_config, SHARE
@@ -31,6 +32,8 @@ class ShareApp(tornado.web.Application):
             (base_url + r'/logic', LogicHandler),
             (base_url + r'/buy', BuyHandler),
             (base_url + r'/sell', SellHandler),
+            (base_url + r'/position', PositionHandler),
+            (base_url + r'/account', AccountHandler),
 
             # main
             (r'/ori_words', AnalysisHandler)

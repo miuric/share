@@ -23,3 +23,12 @@ class OrderApi(SouthApi):
 
     async def sell(self, code: str, price: float, amount: int, price_type=0, type='LIMIT'):
         return await self.trade(action='SELL', code=code, price=price, amount=amount, price_type=price_type, type=type)
+
+
+class PositionApi(SouthApi):
+    api = '/portfolios'
+
+    async def get_positions(self):
+        c, r, h = await self.get()
+
+        return c, r, h

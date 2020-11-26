@@ -29,11 +29,11 @@ class Api:
             url += '?'
             url += '&'.join([str(k) + '=' + str(v) for k, v in req_obj.items()])
             req_obj = None
+            url += f'&key={key}'
 
         else:
             url += '?'
-
-        url += f'key={key}'
+            url += f'key={key}'
 
         c, r, h = await BaseHandler.do_query(url=url, metd=metd, req_obj=req_obj, is_response_json=is_response_json)
 
