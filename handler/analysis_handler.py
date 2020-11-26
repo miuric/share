@@ -104,11 +104,14 @@ class AnalysisHandler(BaseHandler):
             logger.debug('开始交易')
             c, r, h = await go_trader(execute_words)
             try:
-                logger.debug('api返回值: ', r)
+                logger.debug(f'api返回值: {r}')
                 self.db_log.api = json.dumps(r)
                 self.db_log.is_execute = '是'
+                if not self.positive_code(c):
+                    raise Exception('')
             except:
-                pass
+                self.db_log.reason = c
+                raise LogicErrorEnum.COMMON.exception(f'http: {c}')
         else:
             logger.debug('不执行交易')
             self.db_log.is_execute = '否'

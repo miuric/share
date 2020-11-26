@@ -78,7 +78,7 @@ namecodedict = {}
 
 def update_zhangben():  # 更新账本
     print('更新账本')
-    url = 'http://localhost:8888/api/v1.0/positions'
+    url = 'http://49.233.250.82:8888/api/v1.0/positions?key=key'
     r = requests.get(url).json()['dataTable']['rows']
     print(r)
     # if r[0][1] == '':
@@ -233,19 +233,19 @@ def goanalysys(zb, ori_words):
             for sw in one_zb_config['start_words']:
                 if sw in ori_words:
 
-                    if ori_words.find(sw) > sw_pos_tmp:
+                    if ori_words.rfind(sw) > sw_pos_tmp:
                         sw_last = sw
-                        sw_pos_tmp = ori_words.find(sw)
+                        sw_pos_tmp = ori_words.rfind(sw)
 
             ew_first = ''
             ew_pos_tmp = len(ori_words)
 
-            # for ew in one_zb_config['end_words']:
-            #     if ew in ori_words:
-            #
-            #         if ori_words.find(ew) < ew_pos_tmp:
-            #             ew_first = ew
-            #             ew_pos_tmp = ori_words.find(ew)
+            for ew in one_zb_config['end_words']:
+                if ew in ori_words:
+
+                    if ori_words.rfind(ew) < ew_pos_tmp:
+                        ew_first = ew
+                        ew_pos_tmp = ori_words.find(ew)
             tologstr += (',最后开始词：' + sw_last + ' 最初结束词：' + ew_first)
             print('最后开始词：' + sw_last + ' 最初结束词：' + ew_first)
 
@@ -283,16 +283,6 @@ def goanalysys(zb, ori_words):
             print('xxx---------------------')
             print(test_code)
             print('xxx---------------------')
-
-            new_words_no_code =  """
-            双塔食品(002481)
-            调出
-            7.81
-            1成仓
-            """
-
-            do_word = 'buy'
-
             if (test_code):
                 do_code = test_code.group(1)
 
@@ -545,7 +535,7 @@ def test_go():
 
 
 '''
-    zb = '567700379-2448009272'
+    zb = '648296752'
     action_func(zb, ori_words)
 
 
@@ -634,9 +624,9 @@ def analysis():
 
 
 if __name__ == '__main__':
-    test_flag = 0
+    test_flag = 1
 
-    # update_zhangben()
+    update_zhangben()
 
     if test_flag == 0:
         print(timestr() + '程序启动')

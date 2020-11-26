@@ -45,11 +45,6 @@ class DbStreamer(BaseDbModel):
     def output(self):
         return Streamer.from_dict(self.strip_self())
 
-    async def select_all_by_limit(self, start, size, order_by=None, descend=True):
-        limit = '{}, {}'.format(start, size)
-        r, m = await self.select(limit=limit, orderby=order_by, descend=descend)
-        return [type(self)(row) for row in r]
-
     @classmethod
     async def get_all_streamer(cls, start, size, order_by=None, descend=True):
         all_streams = [db.output() for db in await cls().select_all_by_limit(start, size, order_by, descend)]

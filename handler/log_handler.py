@@ -18,10 +18,20 @@ class LogHandler(BaseHandler):
 
     @tornado_wrap
     async def get(self, params, data, headers):
-        db_logs = await DbLog().select_all()
-        count = len(db_logs)
+        size, page = int(params['size']), int(params['page'])
+        prop, order = params.get('prop'), params.get('order')
+        start = (page - 1) * size
 
-        contents = [log.strip_self() for log in db_logs]
+        order_by, descend = None, True
+        if prop and order:
+            order_by = prop
+            if order == 'ascending':
+                descend = False
+
+        all_logs = [log.strip_self() for log in await DbLog().select_all_by_limit(start, size, order_by, descend)]
+
+        contents = all_logs
+        count = await DbLog().select_count()
 
         resp = {
             "payload": {

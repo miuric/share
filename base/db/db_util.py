@@ -318,6 +318,11 @@ class BaseDbModel(object):
             return self.context
         return None
 
+    async def select_all_by_limit(self, start, size, order_by=None, descend=True):
+        limit = '{}, {}'.format(start, size)
+        r, m = await self.select(limit=limit, orderby=order_by, descend=descend)
+        return [type(self)(row) for row in r]
+
     @dbo
     def insert(self, transaction=None):
         self_dict = {}
