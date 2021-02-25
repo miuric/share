@@ -28,8 +28,9 @@ class LogicHandler(BaseHandler):
         if buy:
             new_logic = DbGlobalLogic()
             new_logic.buy = buy
-            await new_logic.update(db_logic)
+            d = await new_logic.update(db_logic)
             logger.info(f'update buy logic with value {buy}')
+            logger.info(d)
 
         if sell:
             new_logic = DbGlobalLogic()
