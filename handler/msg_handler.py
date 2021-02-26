@@ -101,3 +101,46 @@ class MsgHandler(BaseHandler):
             await db_streamer.delete()
 
         return 200, self.success_resp()
+
+
+class MsgExportHandler(BaseHandler):
+    @staticmethod
+    def failed_resp():
+        return {
+            'code': 60204,
+            'message': 'Account and password are incorrect.'
+        }
+
+    @staticmethod
+    def success_resp():
+        return {
+            'code': 20000,
+        }
+
+    @tornado_wrap
+    async def get(self, params, data, headers):
+        all_streamers = [streamer.strip_self() for streamer in
+                         await DbStreamer().select_all()]
+
+        print(all_streamers[0].keys())
+        resp = {
+            "payload": all_streamers
+        }
+
+        resp = dict(self.success_resp(), **resp)
+
+        return 200, resp
+
+
+class MsgImportHandler(MsgExportHandler):
+    @tornado_wrap
+    async def post(self, params, data, headers):
+        streamer_list = data['results']
+
+        await DbStreamer().delete()
+        for streamer in streamer_list:
+            streamer = Streamer.from_dict(streamer)
+            db_streamer = DbStreamer().input(streamer)
+            await db_streamer.insert()
+
+        return 200, self.success_resp()

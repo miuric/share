@@ -1,6 +1,5 @@
 from base.handler.base_handler import tornado_wrap, BaseHandler
 from database.stock import DbStreamer, DbGlobalLogic
-from log import logger
 
 from model.stock_model.streamer import Streamer, StreamerStatusEnum
 
@@ -28,9 +27,7 @@ class LogicHandler(BaseHandler):
         if buy:
             new_logic = DbGlobalLogic()
             new_logic.buy = buy
-            d = await new_logic.update(db_logic)
-            logger.info(f'update buy logic with value {buy}')
-            logger.info(d)
+            await new_logic.update(db_logic)
 
         if sell:
             new_logic = DbGlobalLogic()

@@ -94,6 +94,8 @@ class AnalysisHandler(BaseHandler):
         execute_words = origin2execute(ori_words, streamer, db_logic)
 
         self.db_log.execute_words = execute_words
+        self.db_log.group_no = streamer.group_no
+        self.db_log.qq = streamer.qq
 
         if not execute_words.is_success():
             raise LogicErrorEnum.COMMON.exception('原始命令到执行命令解析错误')

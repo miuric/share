@@ -1,6 +1,6 @@
 import datetime
 
-from base.db.db_util import BaseDbModel
+from base.db.db_util import BaseDbModel, dbo_dict, DBClause
 from model.stock_model.streamer import Streamer
 
 
@@ -72,6 +72,8 @@ class DbLog(BaseDbModel):
     tab_name = 'Log'
 
     def __init__(self, obj=None):
+        self.group_no = None
+        self.qq = None
         self.ori_words = None
         self.execute_words = None
         self.reason = None
@@ -84,3 +86,22 @@ class DbLog(BaseDbModel):
         self.created_time = datetime.datetime.now()
         self.created_time = self.created_time.strftime('%Y-%m-%d %H:%M:%S')
         await self.insert()
+
+    @classmethod
+    async def select_date(cls, start_date, end_date):
+        obj = cls()
+        r, m = await obj.select_from_date(start_date, end_date)
+
+        return [cls(row).strip_self() for row in r]
+
+    @dbo_dict
+    def select_from_date(self, start_date, end_date):
+        keys = [k for k, v in self.__dict__.items()]
+
+        sql, args = DBClause.query(self.__class__.tab_name, keys,
+                                   {k: v for k, v in self.__dict__.items() if v is not None}
+                                   )
+
+        sql += f' where created_time between "{start_date}" and "{end_date}"'
+
+        return sql, args, keys

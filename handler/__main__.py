@@ -5,9 +5,9 @@ import tornado.web
 from handler.analysis_handler import AnalysisHandler
 from handler.buy_handler import BuyHandler, SellHandler
 from handler.end_handler import EndHandler
-from handler.log_handler import LogHandler
+from handler.log_handler import LogHandler, LogExportHandler
 from handler.logic_handler import LogicHandler
-from handler.msg_handler import MsgHandler
+from handler.msg_handler import MsgHandler, MsgExportHandler, MsgImportHandler
 from handler.position_handler import PositionHandler, AccountHandler
 from handler.start_handler import StartHandler
 from handler.user_handler import LoginHandler, UserInfoHandler
@@ -26,7 +26,10 @@ class ShareApp(tornado.web.Application):
             # front-end
             (base_url + r'/message/(?P<id>.+)', MsgHandler),
             (base_url + r'/message', MsgHandler),
+            (base_url + r'/message_export', MsgExportHandler),
+            (base_url + r'/message_import', MsgImportHandler),
             (base_url + r'/log', LogHandler),
+            (base_url + r'/log_export', LogExportHandler),
             (base_url + r'/start', StartHandler),
             (base_url + r'/end', EndHandler),
             (base_url + r'/logic', LogicHandler),

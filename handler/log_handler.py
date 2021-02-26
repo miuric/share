@@ -1,6 +1,11 @@
+import datetime
+import re
+from time import strftime
+
 from base.handler.base_handler import tornado_wrap, BaseHandler
 from database.stock import DbLog
 
+DATE_RE = re.compile(r'(.*?)T(.*?)Z')
 
 class LogHandler(BaseHandler):
     @staticmethod
@@ -28,6 +33,10 @@ class LogHandler(BaseHandler):
             if order == 'ascending':
                 descend = False
 
+        if prop is None:
+            order_by = 'created_time'
+            descend = True
+
         all_logs = [log.strip_self() for log in await DbLog().select_all_by_limit(start, size, order_by, descend)]
 
         contents = all_logs
@@ -42,3 +51,25 @@ class LogHandler(BaseHandler):
 
         return 200, resp
         # log.qq_logger.info(self)
+
+
+class LogExportHandler(LogHandler):
+    @tornado_wrap
+    async def get(self, params, data, headers):
+        start_date, end_date = params.get('date')
+
+        start_match = DATE_RE.match(start_date)
+        end_match = DATE_RE.match(end_date)
+
+        start_date = ' '.join([start_match.group(1), '00:00:00'])
+        end_date = ' '.join([end_match.group(1), '23:59:59'])
+
+        all_logs = await DbLog.select_date(start_date, end_date)
+
+        resp = {
+            "payload": all_logs
+        }
+
+        resp = dict(self.success_resp(), **resp)
+
+        return 200, resp
