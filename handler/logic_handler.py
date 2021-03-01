@@ -27,11 +27,13 @@ class LogicHandler(BaseHandler):
         db_logic = await DbGlobalLogic().select_one_r()
 
         if buy:
+            buy = float(buy)
             new_logic = DbGlobalLogic()
             new_logic.buy = buy
             await new_logic.update(db_logic)
 
         if sell:
+            sell = float(sell)
             new_logic = DbGlobalLogic()
             new_logic.sell = sell
             await new_logic.update(db_logic)
