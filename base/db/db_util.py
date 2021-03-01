@@ -285,7 +285,7 @@ class BaseDbModel(object):
         return [type(self)(row) for row in r]
 
     def strip_self(self):
-        return {k: v for k, v in self.__dict__.items() if v is not None}
+        return {k: v if v is not None else '' for k, v in self.__dict__.items()}
 
     def input(self, obj):
         return self
