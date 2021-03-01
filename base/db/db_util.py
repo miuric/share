@@ -6,7 +6,6 @@ import tornado.ioloop
 import tornado_mysql.pools as pools
 
 import config
-from log import logger
 
 illegal_sql_pat = re.compile(r'(--|;|\sor\s|exec\s|union\s)', re.I | re.M)
 
@@ -499,7 +498,6 @@ class TornadoMysqlUtils:
                     await transaction.commit()
                 return result
             except Exception as data:
-                logger.exception(data)
                 if exception:
                     raise data
         else:

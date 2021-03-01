@@ -1,8 +1,5 @@
 from base.handler.base_handler import tornado_wrap, BaseHandler
-from database.stock import DbStreamer, DbGlobalLogic
-from log import logger
-
-from model.stock_model.streamer import Streamer, StreamerStatusEnum
+from database.stock import DbGlobalLogic
 
 
 class LogicHandler(BaseHandler):
@@ -21,7 +18,6 @@ class LogicHandler(BaseHandler):
 
     @tornado_wrap
     async def post(self, params, data, headers):
-        logger.info(data)
         buy, sell = data.get('buy'), data.get('sell')
 
         db_logic = await DbGlobalLogic().select_one_r()
